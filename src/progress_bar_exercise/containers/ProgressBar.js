@@ -27,6 +27,7 @@ const ProgressBarContainer = () => {
   const [ started, setStarted ] = useState(false)
   const [ stopped, setStopped ] = useState(false)
   const [ hideBar, setHideBar ] = useState(true)
+  const [ breakpoints, setBreakpoints ] = useState([]) // TODO: constraints: must be ordered, left pari must be less than right pair, length must be even
   const leftOff = useRef(0) // how much progress did we make when "Finish Request" was clicked
 
   const onStart = () => {
@@ -71,7 +72,11 @@ const ProgressBarContainer = () => {
      }
 
      if (time.current < time.stop) {
-       setProgress({ current: calcProgress(progress, time, leftOff) })
+       const bkpt = findBreakpoint(breakpoints, progress.current)
+       let speed = 1
+       if (bkpt) speed = 2
+
+       setProgress({ current: calcProgress(progress, time, leftOff, speed) })
      } else {
        // when "Finish Request" is clicked
        // * after 3s fade the progress bar
@@ -109,14 +114,31 @@ const ProgressBarContainer = () => {
   )
 }
 
-export const calcProgress = (progress, time, leftOff) => {
+export const calcProgress = (progress, time, leftOff, speed = 1) => {
   // 1. how much time until we hit our goal (time.stop - time.start)
   // 2. how long have we been running since we started (time.current - time.start)
   // 3. divide 2. by 1. to get our progress as a decimal
   // 4. take our distance to go (progress.stop - leftOff.current)
   // 5. how much progress (4.)  have we made as a percent of our goal (progress.stop - leftOff.current)
   // 6. aplpy any offset that we started with leftOff.current + ...
-  return leftOff.current + ((progress.stop - leftOff.current) * ((time.current - time.start) / (time.stop - time.start)))
+  // 7. increase/decrese the speed by a factor of 'speed'
+  return leftOff.current + ((progress.stop - leftOff.current) * ((time.current - time.start) / (time.stop - time.start)) * speed)
+}
+
+// are we currently in between two breakpoints ?
+export const findBreakpoint = (breakpoints, progress) => {
+  let bkpt = null
+
+  breakpoints.some((pair) => {
+    if ((pair[0] <= progress) && pair[1] >= progress) {
+      bkpt = pair
+      return true
+    }
+
+    return false
+  });
+
+  return bkpt
 }
 
 export default ProgressBarContainer
