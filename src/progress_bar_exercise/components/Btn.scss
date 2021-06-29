@@ -1,0 +1,21 @@
+@import "../../shared_styles/colors.scss";
+
+.btn {
+  width: 160px;
+  height: 40px;
+  border: 1px solid;
+  border-radius: 20px;
+
+  &:hover {
+    border-width: 2px;
+  }
+
+  &:active {
+    border-width: 3px;
+  }
+
+  &.disabled  {
+    color: grey;
+    border-width: 1px;
+  }
+}
