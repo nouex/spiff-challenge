@@ -1,0 +1,23 @@
+@import "../../shared_styles/colors.scss";
+
+.progress-bar {
+    position: fixed;
+    top: 0;
+    height: 6px;
+    width: 100%;
+    background-image: linear-gradient(.25turn, $orange, $red)
+}
+
+.whiteout {
+    position: fixed;
+    right: 0;
+    height: 6px;
+    width: 100%; /* to be overwritten by in-line CSS */
+    background-color: $white;
+}
+
+.fade-out {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 1s, opacity 1s linear;
+}
